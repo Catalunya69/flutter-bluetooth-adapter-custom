@@ -14,7 +14,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Bluetoothadapter flutterbluetoothadapter = Bluetoothadapter();
+  // ignore: unused_field
   StreamSubscription _btConnectionStatusListener, _btReceivedMessageListener;
+  
   String _connectionStatus = "NONE";
   List<BtDevice> devices = [];
   String _recievedMessage;
@@ -32,18 +34,25 @@ class _MyAppState extends State<MyApp> {
   }
 
   _startListening() {
-    _btConnectionStatusListener =
+    this._btConnectionStatusListener =
         flutterbluetoothadapter.connectionStatus().listen((dynamic status) {
       setState(() {
         _connectionStatus = status.toString();
       });
     });
-    _btReceivedMessageListener =
-        flutterbluetoothadapter.receiveMessages().listen((dynamic newMessage) {
+    this._btReceivedMessageListener = flutterbluetoothadapter.receiveMessages().listen((dynamic newMessage) {
       setState(() {
         _recievedMessage = newMessage.toString();
       });
     });
+  }
+
+  @override
+  // ignore: must_call_super
+  void dispose(){
+    this.dispose();
+    _btConnectionStatusListener.cancel();
+    _btReceivedMessageListener.cancel();
   }
 
   @override
@@ -62,7 +71,7 @@ class _MyAppState extends State<MyApp> {
                   fit: FlexFit.tight,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await flutterbluetoothadapter.startServer();
                       },
@@ -74,7 +83,7 @@ class _MyAppState extends State<MyApp> {
                   fit: FlexFit.tight,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () async {
                         devices = await flutterbluetoothadapter.getDevices();
                         setState(() {});
@@ -117,7 +126,7 @@ class _MyAppState extends State<MyApp> {
                   fit: FlexFit.tight,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: () {
                         flutterbluetoothadapter.sendMessage(
                             _controller.text ?? "no msg",
